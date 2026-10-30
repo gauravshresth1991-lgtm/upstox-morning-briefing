@@ -1,0 +1,135 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1, viewport-fit=cover">
+<title>Upstox Morning Briefing – Prototype</title>
+<link rel="preconnect" href="https://fonts.googleapis.com">
+<link href="https://fonts.googleapis.com/css2?family=DM+Sans:wght@400;500;700&display=swap" rel="stylesheet">
+<style>
+:root{--bg:#F3F0F8;--card:#fff;--ink:#1D1633;--mute:#6B6485;--line:#E3DEEE;--brand:#5B2BA0;--brandtx:#fff;--up:#0B7F57;--upbg:#DDF3EA;--dn:#C23A3A;--dnbg:#FBE3E3;--am:#8A5A00;--ambg:#FBEFD2;--nu:#4E4868;--nubg:#ECE8F4;--hero:#2A1457;--herotx:#fff;color-scheme:light;box-sizing:border-box;padding-top:env(safe-area-inset-top,0px);padding-bottom:env(safe-area-inset-bottom,0px)}
+@media (prefers-color-scheme:dark){:root:not([data-theme="light"]){--bg:#130E22;--card:#1E1733;--ink:#F1EDFA;--mute:#A59DC0;--line:#332A4F;--brand:#9B6BFF;--brandtx:#130E22;--up:#4FD4A0;--upbg:#12382B;--dn:#FF8A8A;--dnbg:#431D22;--am:#F2C25B;--ambg:#3F3112;--nu:#C9C2E0;--nubg:#2B2345;--hero:#241349;color-scheme:dark}}
+:root[data-theme="dark"]{--bg:#130E22;--card:#1E1733;--ink:#F1EDFA;--mute:#A59DC0;--line:#332A4F;--brand:#9B6BFF;--brandtx:#130E22;--up:#4FD4A0;--upbg:#12382B;--dn:#FF8A8A;--dnbg:#431D22;--am:#F2C25B;--ambg:#3F3112;--nu:#C9C2E0;--nubg:#2B2345;--hero:#241349;color-scheme:dark}
+html,body{height:auto;margin:0}
+body{background:var(--bg);color:var(--ink);font-family:"DM Sans",system-ui,-apple-system,"Segoe UI",sans-serif;font-size:15px;line-height:1.45}
+*{box-sizing:border-box}
+.wrap{max-width:440px;margin:0 auto;padding:12px 14px 40px}
+.ctl{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:12px;margin-bottom:12px}
+.ctl h1{font-size:15px;margin:0 0 2px;font-weight:700}
+.ctl p{margin:0 0 10px;color:var(--mute);font-size:13px}
+.chips{display:flex;gap:6px;overflow-x:auto;padding-bottom:4px}
+.chip{flex:none;border:1px solid var(--line);background:transparent;color:var(--ink);padding:7px 12px;border-radius:99px;font:inherit;font-size:13px;cursor:pointer}
+.chip[aria-pressed="true"]{background:var(--brand);color:var(--brandtx);border-color:var(--brand);font-weight:500}
+.sw{display:flex;align-items:center;gap:8px;margin-top:10px;font-size:13px;cursor:pointer}
+.sw input{width:18px;height:18px;accent-color:var(--brand)}
+.chip:focus-visible,.cta:focus-visible,.sw input:focus-visible,summary:focus-visible{outline:2px solid var(--brand);outline-offset:2px}
+.hero{background:var(--hero);color:var(--herotx);border-radius:20px;padding:18px 16px 16px}
+.kick{font-size:12px;opacity:.75}
+.hero h2{font-size:26px;line-height:1.15;margin:6px 0 6px;font-weight:700;letter-spacing:-.01em}
+.hero .sub{margin:0;opacity:.9}
+.meta{margin-top:10px;font-size:12px;opacity:.7}
+.tiles{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:12px 0}
+.tile{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px}
+.tile small{display:block;color:var(--mute);font-size:11px}
+.tile b{display:block;font-size:16px;margin:2px 0}
+.tile span{font-size:12px;font-weight:500}
+.tile.stale{opacity:.5}
+.up{color:var(--up)}.dn{color:var(--dn)}.nu{color:var(--mute)}
+.pre{background:var(--card);border:1px solid var(--line);border-left:4px solid var(--brand);border-radius:12px;padding:10px 12px;margin-bottom:10px}
+.pre.delayed{border-left-color:var(--am)}
+.pre p{margin:0 0 4px}
+.src{font-size:11px;color:var(--mute);display:flex;gap:6px;align-items:center;flex-wrap:wrap}
+.badge{font-size:11px;padding:1px 7px;border-radius:99px;background:var(--upbg);color:var(--up)}
+.badge.late{background:var(--ambg);color:var(--am)}
+details{background:var(--card);border:1px solid var(--line);border-radius:12px;padding:10px 12px;margin-bottom:10px;font-size:13px;color:var(--mute)}
+summary{cursor:pointer;color:var(--ink);font-weight:500}
+details p{margin:8px 0 0}
+.card{background:var(--card);border:1px solid var(--line);border-radius:14px;padding:14px;margin-bottom:10px}
+.card.dim{opacity:.6}
+.card h3{font-size:16px;margin:0 0 8px;font-weight:700}
+.card p{margin:0 0 8px}
+.row{display:flex;justify-content:space-between;gap:10px;align-items:flex-start;padding:9px 0;border-top:1px solid var(--line)}
+.row:first-of-type{border-top:0;padding-top:0}
+.row.hi{background:var(--dnbg);margin:0 -8px;padding:9px 8px;border-radius:8px;border-top-color:transparent}
+.row strong{display:block;font-weight:500}
+.row em{display:block;font-style:normal;font-size:12px;color:var(--mute)}
+.tag{flex:none;font-size:11px;font-weight:500;padding:3px 8px;border-radius:99px;white-space:nowrap}
+.t-g{background:var(--upbg);color:var(--up)}.t-r{background:var(--dnbg);color:var(--dn)}.t-a{background:var(--ambg);color:var(--am)}.t-n{background:var(--nubg);color:var(--nu)}
+.disc{font-size:11px;color:var(--mute);margin:8px 0}
+.cta{display:block;width:100%;border:0;border-radius:14px;background:var(--brand);color:var(--brandtx);font:inherit;font-weight:700;padding:14px;margin-top:4px;cursor:pointer}
+.foot{font-size:11px;color:var(--mute);text-align:center;margin-top:12px}
+.toast{position:fixed;left:50%;bottom:calc(20px + env(safe-area-inset-bottom,0px));transform:translateX(-50%);background:var(--ink);color:var(--bg);padding:10px 16px;border-radius:99px;font-size:13px;opacity:0;pointer-events:none;transition:opacity .2s;max-width:90%;text-align:center}
+.toast.on{opacity:1}
+@media (prefers-reduced-motion:reduce){.toast{transition:none}}
+</style>
+</head>
+<body>
+<div class="wrap">
+  <div class="ctl">
+    <h1>Upstox Morning Briefing · working prototype</h1>
+    <p>Pick a segment to see how the same 8:45–9:15 AM briefing changes. Illustrative data.</p>
+    <div class="chips" id="chips" role="group" aria-label="User segment"></div>
+    <label class="sw"><input type="checkbox" id="delay"> Simulate delayed data (fallback mode)</label>
+  </div>
+  <main id="view" aria-live="polite"></main>
+  <div class="foot">Illustrative data and sample company names. For information, not investment advice. Investments in securities are subject to market risks.</div>
+</div>
+<div class="toast" id="toast" role="status"></div>
+<script>
+var SCR="Screener-derived using filters such as ROE above 15%, debt/equity below 0.5, 3-year sales growth above 20% and market cap below ₹10,000 Cr. These are not recommendations or advice. Do your own research.";
+var MB=function(){return {t:"Multibagger candidates",src:"Upstox screener",disc:SCR,rows:[["Veda Precision Ltd","Capital goods · Mcap ₹3,800 Cr · ROE 21% · Sales CAGR 28%"],["Nirmal Agro Tech","Agri inputs · Mcap ₹2,900 Cr · D/E 0.2 · Sales CAGR 24%"],["Kaveri Auto Components","Auto ancillary · Mcap ₹5,400 Cr · ROE 19% · Sales CAGR 22%"],["Sagar Power Systems","Power equipment · Mcap ₹4,600 Cr · ROE 18% · Sales CAGR 26%"]]}};
+var KE="Keep an eye on these today. Screener-derived, not a recommendation.";
+var S={
+new:{name:"New investor",h:"Calm start, Priya",sub:"Global cues are mildly positive. Nothing here needs action from you today.",meta:"Joined 3 weeks ago · 1 SIP",
+ tiles:[["Nifty 50","24,812","+0.4%","up"],["GIFT Nifty","24,860","+0.2%","up",1],["Sensex","81,340","+0.4%","up"]],
+ why:"Simple language, no derivatives data, learning-first (fewer than 10 lifetime trades). Stocks come from a screener, with a disclaimer.",cta:"Explore index funds",
+ cards:[{t:"In plain English",b:"Indian stocks rose yesterday, led by banks. Overseas markets are a little up this morning, so the market may open slightly higher. Prices can reverse quickly.",src:"Upstox Research"},MB(),
+ {t:"Your SIP",b:"₹2,000 goes into your Nifty 50 index fund on the 5th, in 2 days. Balance is sufficient.",src:"Your account"},
+ {t:"Learn in 30 seconds",b:"What is the pre-open session (9:00–9:08)? It sets a fair opening price before trading starts at 9:15.",src:"Learning hub"}]},
+lt:{name:"Long-term investor",h:"Your portfolio, Rahul",sub:"Indicative overnight impact on your holdings: −0.2%. No action needed.",meta:"10+ holdings · 4 MFs · avg hold 14 months",
+ tiles:[["Portfolio","₹4.82L","−0.2% ind.","dn"],["FII / DII","−₹1,240 Cr","DII +₹1,810 Cr","nu",1],["Nifty 50","24,812","+0.4%","up"]],
+ why:"Holdings-first. Each holding is tagged undervalued, fairly valued or overvalued by comparing its P/E and P/B with its sector in the screener.",cta:"Open portfolio",
+ cards:[{t:"Top 10 holdings · valuation",src:"Upstox screener (valuation vs sector)",disc:"Valuation tags are from screener rules and are not buy/sell advice.",rows:[
+ ["HDFC Bank","₹74K · P/E 17 vs sector 21","Undervalued","g"],["Reliance Industries","₹68K · P/E 24 vs sector 24","Fairly valued","a"],["TCS","₹55K · P/E 28 vs sector 27","Fairly valued","a"],["Infosys","₹49K · P/E 22 vs sector 27","Undervalued","g"],["ICICI Bank","₹44K · P/E 18 vs sector 19","Fairly valued","a"],["ITC","₹39K · P/E 26 vs sector 25","Fairly valued","a"],["L&T","₹33K · P/E 36 vs sector 28","Overvalued","r"],["Bharti Airtel","₹28K · P/E 40 vs sector 31","Overvalued","r"],["Asian Paints","₹22K · P/E 55 vs sector 42","Overvalued","r"],["SBI","₹18K · P/E 9 vs sector 12","Undervalued","g"]]},
+ {t:"Undervalued, similar to your holdings",src:"Upstox screener (sector/theme match)",disc:SCR,rows:[["Tapti Finance Ltd","Banking/NBFC · like HDFC Bank, ICICI Bank · P/B 0.9 vs 1.7","Undervalued","g"],["Aarna Software","IT services · like TCS, Infosys · P/E 15 vs 24","Undervalued","g"],["Meru Foods","FMCG · like ITC · P/E 18 vs 26","Undervalued","g"],["Dhara Energy","Energy · like Reliance · P/E 9 vs 14","Undervalued","g"]]},
+ {t:"Holdings in the news",b:"Results due this week: 2 of your stocks. 1 dividend record date tomorrow. 2 SIPs due this week.",src:"News + exchange filings"}]},
+fo:{name:"F&O trader",h:"Levels for today, Karan",sub:"Weekly expiry is Thursday. 2 of your 5 positions are flagged high risk.",meta:"42 F&O trades last 30 days",
+ tiles:[["GIFT Nifty","24,860","+0.2%","up",1],["India VIX","13.8","−2.1%","dn"],["PCR","1.12","Neutral","nu"]],
+ why:"Options are high risk if position delta is above 25% of margin used or the short strike is within 1.5% of spot. Futures are high risk if the margin buffer is below 10% or MTM loss is above 2% of value.",cta:"Open positions",
+ cards:[{t:"Top positions by value",src:"Your account · live",disc:"Sorted by position value. Red rows carry higher risk.",rows:[
+ ["BANKNIFTY FUT · Long 2 lots","₹9.8L · margin buffer 6% · MTM −₹18K","High risk","r",1],["NIFTY 24800 CE · Short 4 lots","₹6.2L · net delta −0.46 · 1.1% from spot","High risk","r",1],["NIFTY 24400 PE · Short 4 lots","₹5.1L · delta −0.12","Lower risk","g"],["RELIANCE FUT · Long 1 lot","₹3.4L · margin buffer 22%","Lower risk","g"],["FINNIFTY 23600 PE · Long 2 lots","₹1.1L · delta −0.30","Moderate","a"]]},
+ {t:"Key Nifty levels",b:"Call OI wall 25,000 · Put OI wall 24,600 · Max pain 24,800. Yesterday’s close sits inside this band.",src:"NSE option chain (prev. EOD)"},
+ {t:"Watch-outs",b:"1 stock in F&O ban list. Event risk: RBI policy at 10:00 AM.",src:"NSE / calendar"}]},
+id:{name:"Intraday trader",h:"Setups to watch, Sneha",sub:"Three breakouts and three breakdowns from yesterday are worth watching at the open.",meta:"Avg 9 trades/day · equity cash",
+ tiles:[["GIFT Nifty","24,860","+0.2%","up",1],["FII / DII","−₹1,240 Cr","DII +₹1,810 Cr","nu",1],["Advance/Decline","1,420 / 980","Positive","up"]],
+ why:"Short-horizon setups from yesterday’s price and volume, plus your watchlist at pre-open.",cta:"Open watchlist",
+ cards:[{t:"Breakouts yesterday",src:"Upstox screener",disc:KE,rows:[["Ravi Steel Ltd","Closed ₹412 above 52-week high ₹405 · volume 3.2x","Breakout","g"],["Pranav Pharma","Closed ₹1,180 above resistance ₹1,165 · volume 2.4x","Breakout","g"],["Zenith Logistics","Closed ₹288 above range top ₹282 · volume 2.9x","Breakout","g"]]},
+ {t:"Breakdowns yesterday",src:"Upstox screener",disc:KE,rows:[["Orion Cement","Closed ₹640 below support ₹652 · volume 2.6x","Breakdown","r"],["Lotus Textiles","Closed ₹96 below 50-DMA ₹99 · volume 2.1x","Breakdown","r"],["Mandar Fintech","Closed ₹530 below range low ₹541 · volume 3.0x","Breakdown","r"]]},
+ {t:"Watchlist gap check",b:"3 of 6 stocks indicate a gap-up above 1%. 1 indicates a gap-down.",src:"Pre-open indicative price",fb:"Latest update not available yet. Showing yesterday’s close summary: Nifty 50 ended at 24,812 (+0.4%), led by banks. This card refreshes automatically."}]},
+lp:{name:"Lapsed user",h:"Welcome back, Imran",sub:"The 20-second version of what you missed.",meta:"No login for 47 days",
+ tiles:[["Nifty 50","24,812","+0.4%","up"],["Your watchlist","3 of 5 up","Avg +0.8%","up"],["Since last visit","Nifty +3.1%","47 days","up"]],
+ why:"Short, low-pressure recap with one clear next step, plus the multibagger candidate list.",cta:"Resume where I left off",
+ cards:[{t:"Markets in one line",b:"Markets have trended up since you last logged in. Your 5 watchlist stocks are mostly higher.",src:"Upstox Research"},{t:"Pick up where you left off",b:"You had started adding funds and had 2 stocks in the cart.",src:"Your account"},MB()]}
+};
+var cur="new",view=document.getElementById("view"),chips=document.getElementById("chips"),delay=document.getElementById("delay"),toastEl=document.getElementById("toast"),tt;
+function toast(m){toastEl.textContent=m;toastEl.classList.add("on");clearTimeout(tt);tt=setTimeout(function(){toastEl.classList.remove("on")},2200)}
+function badge(late){return late?'<span class="badge late">Delayed, as of yesterday 6:10 PM</span>':'<span class="badge">Fresh</span>'}
+function card(c,late){
+ var fb=late&&c.fb,h='<section class="card'+(fb?' dim':'')+'"><h3>'+c.t+'</h3>';
+ if(c.rows){c.rows.forEach(function(r){h+='<div class="row'+(r[4]?' hi':'')+'"><div><strong>'+r[0]+'</strong><em>'+r[1]+'</em></div>'+(r[2]?'<span class="tag t-'+r[3]+'">'+r[2]+'</span>':'')+'</div>'});if(c.disc)h+='<p class="disc">'+c.disc+'</p>'}
+ else h+='<p>'+(fb?c.fb:c.b)+'</p>';
+ return h+'<div class="src">'+c.src+' '+badge(fb)+'</div></section>'}
+function render(){
+ var s=S[cur],late=delay.checked,h='<div class="hero"><div class="kick">Pre-open briefing · market opens at 9:15 AM</div><h2>'+s.h+'</h2><p class="sub">'+s.sub+'</p><div class="meta">'+s.meta+'</div></div><div class="tiles">';
+ s.tiles.forEach(function(t){var st=late&&t[4];h+='<div class="tile'+(st?' stale':'')+'"><small>'+t[0]+'</small><b>'+t[1]+'</b><span class="'+t[3]+'">'+(st?'Stale':t[2])+'</span></div>'});
+ h+='</div><div class="pre'+(late?' delayed':'')+'"><p>'+(late?'Pre-open prices are not ready yet. Showing yesterday’s close: Nifty 50 24,812.':'Nifty 50 indicative open: 24,845 (+0.13%). Price discovery runs 9:00–9:08.')+'</p><div class="src">NSE pre-open '+badge(late)+'</div></div>';
+ h+='<details><summary>Why you see this</summary><p>'+s.why+'</p></details>';
+ s.cards.forEach(function(c){h+=card(c,late)});
+ if(late)h+='<details open><summary>Fallback active</summary><p>Stale values are labelled and dimmed, never shown as live. Cards refresh in place when the feed recovers.</p></details>';
+ h+='<button class="cta" id="cta">'+s.cta+'</button>';
+ view.innerHTML=h;document.getElementById("cta").onclick=function(){toast(s.cta+" (opens in the Upstox app)")}}
+function chipsRender(){chips.innerHTML="";Object.keys(S).forEach(function(k){var b=document.createElement("button");b.className="chip";b.textContent=S[k].name;b.setAttribute("aria-pressed",k===cur);b.onclick=function(){cur=k;chipsRender();render();window.scrollTo(0,0)};chips.appendChild(b)})}
+delay.onchange=render;chipsRender();render();
+</script>
+</body>
+</html>
